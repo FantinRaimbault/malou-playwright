@@ -1,0 +1,56 @@
+name: Playwright Tests
+on:
+    workflow_dispatch:
+        inputs:
+            apps:
+                type: choice
+                description: "Which env to run tests against"
+                required: true
+                default: "production"
+                options:
+                    - "development"
+                    - "staging"
+                    - "production"
+jobs:
+    test:
+        timeout-minutes: 60
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                version: 9
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps
+
+            - name: Run Playwright tests
+              env:
+                MALOU_E2E_PASSWORD: ${{ secrets.MALOU_E2E_PASSWORD }}
+                GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+                ENV: ${{ github.event.inputs.apps }}
+              run: npx playwright test
+
+            - uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 5
+                  
+            - name: Deploy report to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v4
+              if: ${{ always() }}
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./playwright-report
