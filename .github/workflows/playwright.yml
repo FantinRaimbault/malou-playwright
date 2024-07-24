@@ -41,11 +41,17 @@ jobs:
                 ENV: ${{ github.event.inputs.apps }}
               run: npx playwright test
 
+            - name: Create report directory with unique name
+              run: mkdir -p playwright-report/${{ github.run_id }}
+
+            - name: Move report to unique directory
+              run: mv playwright-report/* playwright-report/${{ github.run_id }}
+
             - uses: actions/upload-artifact@v4
               if: ${{ !cancelled() }}
               with:
-                  name: playwright-report
-                  path: playwright-report/
+                  name: playwright-report-${{ github.run_id }}
+                  path: playwright-report/${{ github.run_id }}
                   retention-days: 5
                   
             - name: Deploy report to GitHub Pages
@@ -53,4 +59,4 @@ jobs:
               if: ${{ always() }}
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./playwright-report
+                  publish_dir: playwright-report
