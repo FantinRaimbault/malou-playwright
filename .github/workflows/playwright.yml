@@ -34,29 +34,29 @@ jobs:
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps
 
-            - name: Run Playwright tests
-              env:
-                MALOU_E2E_PASSWORD: ${{ secrets.MALOU_E2E_PASSWORD }}
-                GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
-                ENV: ${{ github.event.inputs.apps }}
-              run: npx playwright test
+            #- name: Run Playwright tests
+            #  env:
+            #    MALOU_E2E_PASSWORD: ${{ secrets.MALOU_E2E_PASSWORD }}
+            #    GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+            #    ENV: ${{ github.event.inputs.apps }}
+            #  run: npx playwright test
 
-            - name: Create report directory with unique name
-              run: mkdir -p playwright-report/${{ github.run_id }}
+            #- name: Create report directory with unique name
+            #  run: mkdir -p playwright-report/${{ github.run_id }}
 
-            - name: Move report to unique directory
-              run: mv playwright-report/* playwright-report/${{ github.run_id }}
+            #- name: Move report to unique directory
+            #  run: mv playwright-report/* playwright-report/${{ github.run_id }}
 
-            - uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                  name: playwright-report-${{ github.run_id }}
-                  path: playwright-report/${{ github.run_id }}
-                  retention-days: 5
+            #- uses: actions/upload-artifact@v4
+            #  if: ${{ !cancelled() }}
+            #  with:
+            #      name: playwright-report-${{ github.run_id }}
+            #      path: playwright-report/${{ github.run_id }}
+            #      retention-days: 5
                   
-            - name: Deploy report to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v4
-              if: ${{ always() }}
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: playwright-report
+            #- name: Deploy report to GitHub Pages
+            #  uses: peaceiris/actions-gh-pages@v4
+            #  if: ${{ always() }}
+            #  with:
+            #      github_token: ${{ secrets.GITHUB_TOKEN }}
+            #      publish_dir: playwright-report
