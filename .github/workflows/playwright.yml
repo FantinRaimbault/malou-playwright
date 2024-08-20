@@ -33,6 +33,10 @@ jobs:
 
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps
+            - name: Test
+              run: cd tests
+            - name: LS
+              run: ls
 
             #- name: Run Playwright tests
             #  env:
